@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -26,13 +27,17 @@ public class MainActivity extends AppCompatActivity {
     SeekBar timerSeek;
     TextView timerText;
     ImageView btnTest;
-    int c=1;
+    ImageButton pause;
+    ImageButton play;
+    CountDownTimer yourCountDownTimer;
     MediaPlayer over;
     public void controlTimer(View view)
     {timerSeek.setEnabled(false);
+    play.setEnabled(false);
+    pause.setEnabled(true);
 
 
-        new CountDownTimer(timerSeek.getProgress()*1000+100,1000)
+        yourCountDownTimer=new CountDownTimer(timerSeek.getProgress()*1000+100,1000)
         {
             @Override
             public void onTick(long millisUntilFinished)
@@ -73,6 +78,9 @@ over=MediaPlayer.create(this,R.raw.cha);
         timerSeek.setMax(30*60);
         timerText=findViewById(R.id.timerText);
         btnTest =findViewById(R.id.imageView);
+        play=findViewById(R.id.imageView);
+        pause=findViewById(R.id.imageButton);
+        pause.setEnabled(false);
 
         timerSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -130,6 +138,16 @@ hs.post(run);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+    public void pauseClick(View view)
+    {
+        timerSeek.setEnabled(true);
+        play.setEnabled(true);
+        pause.setEnabled(false);
+        yourCountDownTimer.cancel();
+        over.pause();
+
+
     }
 
     @Override

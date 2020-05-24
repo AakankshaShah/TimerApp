@@ -1,11 +1,14 @@
 package com.example.timerdemo11;
 
+import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -27,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
     SeekBar timerSeek;
     TextView timerText;
     ImageView btnTest;
-    ImageButton pause;
-    ImageButton play;
+    ImageView pause;
+    ImageView play;
     CountDownTimer yourCountDownTimer;
     MediaPlayer over;
+    ProgressBar pg;
     public void controlTimer(View view)
     {timerSeek.setEnabled(false);
     play.setEnabled(false);
@@ -39,10 +44,23 @@ public class MainActivity extends AppCompatActivity {
 
         yourCountDownTimer=new CountDownTimer(timerSeek.getProgress()*1000+100,1000)
         {
+
             @Override
-            public void onTick(long millisUntilFinished)
+            public void onTick(final long millisUntilFinished)
             {
 updateTimer(millisUntilFinished/1000);
+                Handler progressBarHandler = new Handler();
+
+                //ProgressBar bar = (ProgressBar) findViewById(R.id.progressBar1);;
+
+                progressBarHandler .post(new Runnable() {
+
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    public void run() {
+                        pg.setMax(Math.toIntExact(timerSeek.getProgress()*1000+100));
+                        pg.setProgress(Math.toIntExact(millisUntilFinished));
+                    }
+                });
             }
 
             @Override
@@ -81,6 +99,7 @@ over=MediaPlayer.create(this,R.raw.cha);
         play=findViewById(R.id.imageView);
         pause=findViewById(R.id.imageButton);
         pause.setEnabled(false);
+        pg=findViewById(R.id.progressBar);
 
         timerSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -111,14 +130,7 @@ over=MediaPlayer.create(this,R.raw.cha);
             }
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         //Using handler timer
         /*final Handler hs=new Handler();
         Runnable run=new Runnable() {
@@ -149,6 +161,9 @@ hs.post(run);
 
 
     }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
